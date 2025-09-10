@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notification - Lead Status</title>
+   <link rel="stylesheet" href="/css/notification.css">
+  </head>
+  <body>
+    <!-- Greeting -->
+    <div class="greeting animated-header">
+      <h1>GOOD DAY, USER</h1>
+      <p><%= quote && quote.quote ? quote.quote : "Achieve your target." %></p>
+      <p style="margin-top: -25px">
+        ~ <%= quote && quote.author ? quote.author : "Bob Hooey" %>
+      </p>
+    </div>
+
+    <!-- Notification Card -->
+    <div class="animated-element">
+      <% notifications.forEach(function(notif) { %>
+      <div class="card">
+        <h2><%= notif.title %></h2>
+        <p class="content"><%= notif.content %></p>
+        <button class="btn deleteBtn" data-id="<%= notif.id %>">
+          Mark As Read
+        </button>
+        <div class="footer"><%= notif.createdAt.toDateString() %></div>
+      </div>
+      <% }); %>
+    </div>
+    <script>
+      $(document).on("click", ".deleteBtn", function () {
+        var id = $(this).data("id");
+        var user = <%- JSON.stringify(user) %>
+
+        $.post("/api/v1/user/notification/" +user.id+"/"+ id, function (res) {
+          window.location.reload()
+        }).fail(function () {
+          alert("Delete failed");
+        });
+      });
+    </script>
+  </body>
+</html>

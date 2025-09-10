@@ -1,16 +1,18 @@
 import { Router } from "express";
+import { getUserInfo } from "../controllers/profile.controller";
+import { getDailyLeadCount } from "../controllers/dashboard.controller";
+import { getUserAllAttendance } from "../controllers/attendance.controller";
+import { getAllNotificationOfUser } from "../controllers/notification.controller";
 
 const router = Router();
 
 router.get("/", (req, res) => {
-  res.render("index", { title: "Home", message: "Hello from EC2 🚀" });
+  res.redirect("/user/profile");
 });
-
-router.get("/about", (req, res) => {
-  res.render("about", {
-    title: "About",
-    info: "This is an Express + EJS app",
-  });
-});
+router.get("/dashboard", getDailyLeadCount);
+router.get("/attendance", getUserAllAttendance);
+// router.get("/leads", getUserLeads);
+router.get("/profile", getUserInfo);
+router.get("/notification", getAllNotificationOfUser);
 
 export default router;

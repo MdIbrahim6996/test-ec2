@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Leads Count - Chart</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/attendance.css" />
+  </head>
+  <body>
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.js"></script>
+
+    <div class="animated-header"><div id="calendar"></div></div>
+    <div
+      id="tooltip"
+      style="
+        position: absolute;
+        display: none;
+        background: #333;
+        color: #fff;
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 4px;
+        z-index: 10000;
+        pointer-events: none;
+      "
+    ></div>
+    <script>
+      var attendance = <%- JSON.stringify(attendance) %>;
+
+      $(document).ready(function () {
+          $("#calendar").fullCalendar({
+              height: 585,
+              defaultView: "month",
+              dayRender: function (date, cell) {
+                  var content = cell.html();
+                  cell.html(
+                      '<div class="day-wrapper">' + content + "</div>"
+                  );
+              },
+              events: attendance.map((item) => ({
+                  title: item.isLate?"LATE":"ON TIME",
+                  start: item.dateTime,
+                  color: item.isLate ? "red" : "green",
+              })),
+
+              eventMouseover: function (event, jsEvent, view) {
+        var tooltip = $('#tooltip');
+        tooltip.html(
+          "<strong>" + event.title + "</strong><br/>" +
+          // (event.start ? new Date(event.start).toString().substring(0,25) : "") + "<br/>" +
+          (event.description || "Mark Time: "+ new Date(event.start).toString().substring(0,25))
+        );
+
+        tooltip.css({
+          top: jsEvent.pageY + 10 + "px",
+          left: jsEvent.pageX + 10 + "px"
+        }).fadeIn(200);
+      },
+      eventMouseout: function (event, jsEvent, view) {
+        $('#tooltip').fadeOut(200);
+      },
+      eventMousemove: function (event, jsEvent, view) {
+        // Keep tooltip following the mouse
+        $('#tooltip').css({
+          top: jsEvent.pageY + 10 + "px",
+          left: jsEvent.pageX + 10 + "px"
+        });
+      }
+
+          });
+      });
+    </script>
+  </body>
+</html>
