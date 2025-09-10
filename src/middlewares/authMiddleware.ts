@@ -85,6 +85,7 @@ export const isUserAuth = async (
     next();
   } catch (error) {
     console.log(error);
-    next(error);
+    // next(error);
+    res.redirect("/login");
   }
 };
