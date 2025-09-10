@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 80;
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+console.log(path.join(path.resolve()));
+console.log(__dirname);
+
 // Routes
 app.get("/", (req, res) => {
     res.render("index", { title: "Home", message: "Hello from EC2 🚀" });
