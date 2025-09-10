@@ -86,8 +86,8 @@
           <tr>
             <td>
               <span
-                class="status-badge <%= lead.status.name==='rework/warmup' ? 'rework' : lead.status.name %>"
-                ><%= lead.status.name %></span
+                class="status-badge <%= lead.Status.name==='rework/warmup' ? 'rework' : lead.Status.name %>"
+                ><%= lead.Status.name %></span
               >
             </td>
             <td><%= new Date(lead.saleDate).toString().substring(0,15) %></td>
@@ -95,8 +95,8 @@
               <%= lead.title %> <%= lead.firstName %> <%= lead.middleName %> <%=
               lead.lastName %>
             </td>
-            <td class="process-name"><%= lead.process.name %></td>
-            <td class="plan-name"><%= lead.plan.name %></td>
+            <td class="process-name"><%= lead.Process.name %></td>
+            <td class="plan-name"><%= lead.Plan.name %></td>
             <td>
               <a
                 href="#"
