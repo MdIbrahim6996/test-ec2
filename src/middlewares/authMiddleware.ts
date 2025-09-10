@@ -50,18 +50,16 @@ export const isUserAuth = async (
 ) => {
   try {
     const { token } = req.cookies;
-    console.log(token);
     if (!token) {
       return res.redirect("/login");
     }
+
     const { id } = jwt.verify(token, "fsdfsdf") as IJwtPayload;
+
     if (id) {
       const user = (await prisma.user.findUnique({
         where: { id: parseInt(id) },
         select: {
-          createdAt: false,
-          updatedAt: false,
-          password: false,
           id: true,
           email: true,
           name: true,
@@ -78,6 +76,7 @@ export const isUserAuth = async (
       //     return res.redirect(CLIENT_URL);
       //   }
     } else {
+      console.log("inside else auth token", token);
       res.redirect("/login");
       throw new Error("Invalid token. Please Sign in.");
     }
@@ -85,7 +84,7 @@ export const isUserAuth = async (
     next();
   } catch (error) {
     console.log(error);
-    // next(error);
+    next(error);
     res.redirect("/login");
   }
 };

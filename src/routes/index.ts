@@ -6,9 +6,9 @@ import { getAllNotificationOfUser } from "../controllers/notification.controller
 
 const router = Router();
 
-router.get("/", (req, res) => {
-  res.redirect("/user/profile");
-});
+// router.get("/", (req, res) => {
+//   res.redirect("/user/profile");
+// });
 router.get("/dashboard", getDailyLeadCount);
 router.get("/attendance", getUserAllAttendance);
 // router.get("/leads", getUserLeads);

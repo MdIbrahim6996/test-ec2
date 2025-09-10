@@ -1,23 +1,22 @@
 import express, { Response } from "express";
 import path from "path";
 import morgan from "morgan";
-import pagesRouter from "./routes";
-
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import expressLayouts from "express-ejs-layouts";
+import pagesRouter from "./routes";
 import { monthNames } from "./utils/appConstants";
 import { isUserAuth } from "./middlewares/authMiddleware";
-import { loginFunction } from "./controllers/auth.controller";
+import { loginFunction, logoutController } from "./controllers/auth.controller";
 import { prisma } from "./lib/prismaClient";
 
 const app = express();
 
-// app.use(cors());
-app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(compression());
 app.use(morgan("dev"));
 
@@ -43,6 +42,24 @@ app.locals.pusherKey = process.env.PUSHER_KEY;
 app.locals.pusherCluster = process.env.PUSHER_CLUSTER;
 app.locals.currentMonth = monthNames[new Date().getMonth()];
 
+// ROUTING
+app.get("/", (_, res: Response) => {
+  res.redirect("/user/profile");
+});
+
+app.get("/ping", (_, res: Response) => res.send("pong"));
+app
+  .get("/login", (req, res: Response) => {
+    const { token } = req.cookies;
+    if (token) {
+      return res.redirect("/user/profile");
+    } else {
+      return res.render("pages/login", { layout: false, error: null });
+      // return res.redirect("/login");
+    }
+  })
+  .post("/login", loginFunction);
+
 // SENDING GLOBAL VARIABLES TO SIDEBAR EJS
 app.use(isUserAuth, async (req, res, next) => {
   const notifs = await prisma.notification.count({
@@ -52,24 +69,10 @@ app.use(isUserAuth, async (req, res, next) => {
   res.locals.notifCount = notifs;
   next();
 });
-
-// ROUTING
-app.get("/", (_, res: Response) => {
-  res.redirect("/user/profile");
-});
-
-app.get("/ping", (_, res: Response) => res.send("pong"));
-app.get("/login", (req, res: Response) => {
-  const { token } = req.cookies;
-  if (token) {
-    return res.redirect("/user/profile");
-  } else res.render("pages/login", { layout: false, error: null });
-});
-
-app.post("/login", loginFunction);
+app.get("/logout", logoutController);
 app.use("/user", isUserAuth, pagesRouter);
 
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).render("errors/404", { url: req.originalUrl, layout: false });
 });
 

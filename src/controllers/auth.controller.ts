@@ -112,9 +112,9 @@ export const logoutController = async (
   res: Response,
   next: NextFunction
 ) => {
-  res.clearCookie("token");
-  res.send({ msg: "logout success" });
   try {
+    res.clearCookie("token");
+    return res.redirect("/login");
   } catch (error) {
     console.log(error);
     next(error);
