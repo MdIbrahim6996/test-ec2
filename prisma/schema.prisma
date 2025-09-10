@@ -1,0 +1,176 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["strictUndefinedChecks"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_P_URL")
+}
+
+model Appliance {
+  id              Int      @id @default(autoincrement())
+  name            String
+  makeOfAppliance String
+  age             Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+  Lead            Lead[]
+}
+
+model Attendance {
+  id       Int      @id @default(autoincrement())
+  userId   Int?     @default(1)
+  isLate   Boolean  @default(false)
+  dateTime DateTime @default(now())
+  User     User?    @relation(fields: [userId], references: [id])
+}
+
+model Holiday {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model Lead {
+  id                           Int                  @id @default(autoincrement())
+  title                        String
+  firstName                    String
+  middleName                   String?
+  lastName                     String
+  centre                       String
+  address                      String?
+  city                         String?
+  pincode                      String
+  password                     String?
+  dateOfBirth                  DateTime?
+  phone                        String
+  processId                    Int?
+  planId                       Int?
+  closerId                     Int?
+  fee                          Int?
+  currency                     String?
+  bankName                     String?
+  accountName                  String?
+  sort                         String?
+  applianceId                  Int?
+  statusId                     Int?                 @default(1)
+  saleDate                     DateTime             @default(now())
+  createdAt                    DateTime             @default(now())
+  updatedAt                    DateTime
+  accountNumber                String?
+  cardBankName                 String?
+  cardCvv                      String?
+  cardName                     String?
+  cardNumber                   String?
+  county                       String?
+  expiry                       String?
+  shift                        String?
+  leadByUserId                 Int?
+  verifierId                   Int?
+  paymentMethod                String?
+  comment                      String?
+  poa                          Boolean              @default(false)
+  Appliance                    Appliance?           @relation(fields: [applianceId], references: [id])
+  User_Lead_closerIdToUser     User?                @relation("Lead_closerIdToUser", fields: [closerId], references: [id])
+  User_Lead_leadByUserIdToUser User?                @relation("Lead_leadByUserIdToUser", fields: [leadByUserId], references: [id])
+  Plan                         Plan?                @relation(fields: [planId], references: [id])
+  Process                      Process?             @relation(fields: [processId], references: [id])
+  Status                       Status?              @relation(fields: [statusId], references: [id])
+  User_Lead_verifierIdToUser   User?                @relation("Lead_verifierIdToUser", fields: [verifierId], references: [id])
+  StatusChangeReason           StatusChangeReason[]
+}
+
+model LeadCount {
+  id        Int      @id @default(autoincrement())
+  count     Int      @default(0)
+  date      Int
+  month     Int
+  year      Int
+  userId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User?    @relation(fields: [userId], references: [id])
+
+  @@unique([date, month, year, userId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  type      String
+  userId    Int?
+  saleDate  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User?    @relation(fields: [userId], references: [id])
+}
+
+model Plan {
+  id        Int      @id @default(autoincrement())
+  name      String
+  processId Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Lead      Lead[]
+  Process   Process? @relation(fields: [processId], references: [id])
+}
+
+model Process {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Lead      Lead[]
+  Plan      Plan[]
+  User      User[]
+}
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Lead      Lead[]
+}
+
+model StatusChangeReason {
+  id         Int      @id @default(autoincrement())
+  reason     String
+  userId     Int?
+  leadId     Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  fromStatus String?
+  toStatus   String?
+  Lead       Lead?    @relation(fields: [leadId], references: [id])
+  User       User?    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                           Int                  @id @default(autoincrement())
+  email                        String               @unique
+  name                         String
+  employeeId                   String               @unique
+  phone                        String
+  isBlocked                    Boolean              @default(false)
+  password                     String
+  role                         String               @default("user")
+  createdAt                    DateTime             @default(now())
+  updatedAt                    DateTime
+  alias                        String               @unique
+  processId                    Int?
+  Attendance                   Attendance[]
+  Lead_Lead_closerIdToUser     Lead[]               @relation("Lead_closerIdToUser")
+  Lead_Lead_leadByUserIdToUser Lead[]               @relation("Lead_leadByUserIdToUser")
+  Lead_Lead_verifierIdToUser   Lead[]               @relation("Lead_verifierIdToUser")
+  LeadCount                    LeadCount[]
+  Notification                 Notification[]
+  StatusChangeReason           StatusChangeReason[]
+  Process                      Process?             @relation(fields: [processId], references: [id])
+}

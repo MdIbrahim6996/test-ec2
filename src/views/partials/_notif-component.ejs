@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Notification UI</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Notification Box */
+      .notification {
+        background: #d3d2d2;
+        border-radius: 8px;
+        /* padding: 10px; */
+        margin-bottom: 15px;
+        width: 320px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        position: absolute;
+        top: 2rem;
+        left: 50%;
+        transform: translate(-50%, 0);
+        -moz-transform: translate(-50%, 0);
+      }
+
+      /* Header */
+      .notif-header {
+        overflow: hidden; /* old clearfix */
+        background-color: white;
+        padding: 0.5rem 1rem;
+      }
+
+      .notif-title {
+        font-weight: bold;
+        font-size: 12px;
+        vertical-align: middle;
+      }
+
+      .notif-time {
+        float: right;
+        font-size: 11px;
+        color: #555;
+      }
+
+      /* Body */
+      .notif-body {
+        font-size: 13px;
+        line-height: 1.4em;
+        padding: 1rem;
+      }
+      .notif-body p {
+        margin: 5px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notification">
+      <div class="notif-header">
+        <span class="notif-title">LOREMIPSUM</span>
+        <!-- <span class="notif-time">now</span> -->
+      </div>
+      <div class="notif-body">
+        <p>
+          Lorem ipsum dolor sit amet, conLorem ipsum dolor sit amet, conLorem
+          ipsum dolor sit amet.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

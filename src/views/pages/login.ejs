@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login - First Voice Global Services</title>
+    <link rel="stylesheet" href="/css/login.css" />
+  </head>
+  <body>
+    <div class="container clearfix">
+      <!-- Left Side -->
+      <div class="left">
+        <h1 class="animated-header-slideup">First Voice Global Services</h1>
+        <p class="animated-subheader-slideup">
+          Driving Global Growth Through Smarter Sales Solutions
+        </p>
+      </div>
+
+      <!-- Right Side -->
+      <div class="right animated-header-slideup">
+        <h2>Hello Again!</h2>
+        <p>Welcome Back</p>
+
+        <form action="/login" method="POST">
+          <input
+            type="text"
+            class="input-box"
+            placeholder="Email Address"
+            name="email"
+          />
+          <input
+            type="password"
+            class="input-box"
+            placeholder="Password"
+            name="password"
+          />
+          <button type="submit" class="btn">Login</button>
+        </form>
+
+        <a href="#" class="forgot">Forgot Password</a>
+      </div>
+    </div>
+    <script>
+      var errormsg = "<%= error%>";
+      if (errormsg) alert(errormsg);
+    </script>
+  </body>
+</html>

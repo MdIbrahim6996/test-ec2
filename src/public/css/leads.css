@@ -1,0 +1,251 @@
+/* --- Filter Section --- */
+.main {
+  padding: 1rem;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters label {
+  font-size: 14px;
+  margin-right: 2px;
+  margin-left: 15px;
+}
+
+.filters input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.label,
+.filter-buttons button,
+.action-btn {
+  font-weight: 600;
+}
+
+.filter-buttons button,
+.reset-link {
+  padding: 3px 12px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-green {
+  background: #16a34a;
+}
+.btn-blue {
+  background: #2563eb;
+}
+.btn-green:hover {
+  background: #15803d;
+}
+.btn-blue:hover {
+  background: #1d4ed8;
+}
+
+/* --- Status Labels --- */
+.status-labels {
+  margin: 20px 0 10px;
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  display: inline-block;
+  text-transform: capitalize;
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.label-success {
+  background: #16a34a;
+}
+.label-pending {
+  background: #facc15;
+}
+.label-rework {
+  background: #3b82f6;
+}
+.label-cancelled {
+  background: #dc2626;
+}
+
+/* --- Table Styles --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #f3f4f6;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+table .plan-name {
+  text-transform: capitalize;
+}
+table .process-name {
+  text-transform: capitalize;
+}
+
+th {
+  font-weight: bold;
+  color: #555;
+}
+
+.status-badge {
+  display: inline-block;
+  text-transform: capitalize;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.pending {
+  background: #facc15;
+  color: #fff;
+}
+.success {
+  background: #16a34a;
+  color: #fff;
+}
+.cancel {
+  background: #dc2626;
+  color: #fff;
+}
+.rework {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.action-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.action-btn:hover {
+  background: #1d4ed8;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 9998;
+}
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Modal container (no flexbox) */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 9999;
+  overflow: hidden;
+}
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  background: #f7f9fb;
+}
+.modal-title {
+  margin: 0;
+  font-size: 16px;
+  color: #1b3c53;
+}
+.modal-body {
+  padding: 12px;
+}
+.modal-footer {
+  padding: 10px 12px;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+.close-btn {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.status-item {
+  border: 1px solid #94a3b8; /* slate-400 */
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 12px;
+}
+.status-label {
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.status-meta {
+  margin-top: 8px;
+  font-size: 13px;
+
+  /* Old browser safe align (no flex) */
+  overflow: hidden;
+}
+.status-meta p {
+  float: left;
+  margin: 0;
+}
+.status-meta .date-text {
+  float: right;
+  font-size: 12px;
+  color: #555;
+}
+.reason-label {
+  text-decoration: underline;
+  font-size: 12px;
+}
