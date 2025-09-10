@@ -85,8 +85,10 @@ export const loginFunction = async (
 
       res.cookie("token", token, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "production", // true in prod only
+        sameSite: "lax",
         maxAge: 12 * 60 * 60 * 1000,
+        path: "/",
       });
       if (existingUser?.role === "user") {
         return res.redirect(303, "/user/profile");
