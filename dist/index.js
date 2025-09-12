@@ -42,20 +42,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var morgan_1 = __importDefault(require("morgan"));
-var routes_1 = __importDefault(require("./routes"));
 var cors_1 = __importDefault(require("cors"));
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var compression_1 = __importDefault(require("compression"));
 var express_ejs_layouts_1 = __importDefault(require("express-ejs-layouts"));
+var routes_1 = __importDefault(require("./routes"));
 var appConstants_1 = require("./utils/appConstants");
 var authMiddleware_1 = require("./middlewares/authMiddleware");
 var auth_controller_1 = require("./controllers/auth.controller");
 var prismaClient_1 = require("./lib/prismaClient");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
-app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
 app.use((0, compression_1.default)());
 app.use((0, morgan_1.default)("dev"));
 // Set EJS as template engine
@@ -76,6 +76,23 @@ app.use("/css", express_1.default.static(path_1.default.join(path_1.default.reso
 app.locals.pusherKey = process.env.PUSHER_KEY;
 app.locals.pusherCluster = process.env.PUSHER_CLUSTER;
 app.locals.currentMonth = appConstants_1.monthNames[new Date().getMonth()];
+// ROUTING
+app.get("/", authMiddleware_1.isUserAuth, function (_, res) {
+    res.redirect("/user/profile");
+});
+app.get("/ping", function (_, res) { return res.send("pong"); });
+app
+    .get("/login", function (req, res) {
+    var token = req.cookies.token;
+    if (token) {
+        return res.redirect("/user/profile");
+    }
+    else {
+        return res.render("pages/login", { layout: false, error: null });
+        // return res.redirect("/login");
+    }
+})
+    .post("/login", auth_controller_1.loginFunction);
 // SENDING GLOBAL VARIABLES TO SIDEBAR EJS
 app.use(authMiddleware_1.isUserAuth, function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var notifs;
@@ -94,22 +111,9 @@ app.use(authMiddleware_1.isUserAuth, function (req, res, next) { return __awaite
         }
     });
 }); });
-// ROUTING
-app.get("/", function (_, res) {
-    res.redirect("/user/profile");
-});
-app.get("/ping", function (_, res) { return res.send("pong"); });
-app.get("/login", function (req, res) {
-    var token = req.cookies.token;
-    if (token) {
-        return res.redirect("/user/profile");
-    }
-    else
-        res.render("pages/login", { layout: false, error: null });
-});
-app.post("/login", auth_controller_1.loginFunction);
+app.get("/logout", auth_controller_1.logoutController);
 app.use("/user", authMiddleware_1.isUserAuth, routes_1.default);
-app.use(function (req, res, next) {
+app.use(function (req, res) {
     res.status(404).render("errors/404", { url: req.originalUrl, layout: false });
 });
 var PORT = process.env.PORT || 8000;

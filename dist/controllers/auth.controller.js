@@ -137,8 +137,10 @@ var loginFunction = function (req, res, next) { return __awaiter(void 0, void 0,
                     token = (0, token_1.generateAuthToken)(String(existingUser === null || existingUser === void 0 ? void 0 : existingUser.id), existingUser.role);
                     res.cookie("token", token, {
                         httpOnly: true,
-                        secure: false,
+                        secure: process.env.NODE_ENV === "production", // true in prod only
+                        sameSite: "lax",
                         maxAge: 12 * 60 * 60 * 1000,
+                        path: "/",
                     });
                     if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.role) === "user") {
                         return [2 /*return*/, res.redirect(303, "/user/profile")];
@@ -163,9 +165,9 @@ var loginFunction = function (req, res, next) { return __awaiter(void 0, void 0,
 exports.loginFunction = loginFunction;
 var logoutController = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        res.clearCookie("token");
-        res.send({ msg: "logout success" });
         try {
+            res.clearCookie("token");
+            return [2 /*return*/, res.redirect("/login")];
         }
         catch (error) {
             console.log(error);

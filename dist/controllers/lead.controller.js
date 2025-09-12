@@ -35,94 +35,60 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isUserAuth = void 0;
-// import { prisma } from "../lib/prismaClient";
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+exports.getUserLeads = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
-// import { CLIENT_URL } from "../utils/appContants";
-// export const isAuth = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const { token } = req.cookies;
-//     if (!token) {
-//       res.status(401);
-//       throw new Error("Token expired login again.");
-//     }
-//     const { id } = jwt.verify(token, "fsdfsdf") as IJwtPayload;
-//     if (id) {
-//       const user = (await prisma.user.findUnique({
-//         where: { id: parseInt(id) },
-//         select: {
-//           createdAt: false,
-//           updatedAt: false,
-//           password: false,
-//           id: true,
-//           email: true,
-//           name: true,
-//           role: true,
-//           employeeId: true,
-//           phone: true,
-//           isBlocked: true,
-//         },
-//       })) as User;
-//       req.user = user;
-//     } else throw new Error("Invalid token. Please Sign in.");
-//     next();
-//   } catch (error) {
-//     console.log(error);
-//     next(error);
-//   }
-// };
-var isUserAuth = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, id, user, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+var client_1 = require("@prisma/client");
+var getUserLeads = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, statusId, saleDate, fromDate, toDate, id, newSaleDate, nextDay, status_1, leads, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
-                token = req.cookies.token;
-                if (!token) {
-                    return [2 /*return*/, res.redirect("/login")];
-                }
-                id = jsonwebtoken_1.default.verify(token, "fsdfsdf").id;
-                if (!id) return [3 /*break*/, 2];
-                return [4 /*yield*/, prismaClient_1.prisma.user.findUnique({
-                        where: { id: parseInt(id) },
-                        select: {
-                            id: true,
-                            email: true,
-                            name: true,
-                            role: true,
-                            employeeId: true,
-                            phone: true,
-                            isBlocked: true,
-                        },
-                    })];
+                _a = req.query, statusId = _a.statusId, saleDate = _a.saleDate, fromDate = _a.fromDate, toDate = _a.toDate;
+                id = req.user.id;
+                newSaleDate = new Date(saleDate);
+                newSaleDate.setUTCHours(0, 0, 0, 0);
+                nextDay = new Date(saleDate);
+                nextDay.setUTCHours(0, 0, 0, 0);
+                nextDay.setDate(nextDay.getDate() + 1);
+                _b.label = 1;
             case 1:
-                user = (_a.sent());
-                req.user = user;
-                return [3 /*break*/, 3];
+                _b.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, prismaClient_1.prisma.status.findMany()];
             case 2:
-                console.log("inside else auth token", token);
-                res.redirect("/login");
-                throw new Error("Invalid token. Please Sign in.");
+                status_1 = _b.sent();
+                return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
+                        where: {
+                            leadByUserId: id,
+                            statusId: statusId ? parseInt(statusId) : client_1.Prisma.skip,
+                            saleDate: {
+                                gte: saleDate ? newSaleDate : client_1.Prisma.skip,
+                                lt: saleDate ? nextDay : client_1.Prisma.skip,
+                            },
+                            createdAt: {
+                                gte: fromDate ? new Date(fromDate) : client_1.Prisma.skip,
+                                lte: toDate ? new Date(toDate) : client_1.Prisma.skip,
+                            },
+                        },
+                        include: {
+                            Status: { select: { name: true } },
+                            Process: { select: { name: true } },
+                            Plan: { select: { name: true } },
+                            StatusChangeReason: true,
+                        },
+                        orderBy: { createdAt: "desc" },
+                    })];
             case 3:
-                next();
+                leads = _b.sent();
+                res.render("pages/leads", { currentPath: "/user/leads", leads: leads, status: status_1 });
                 return [3 /*break*/, 5];
             case 4:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
                 console.log(error_1);
                 next(error_1);
-                res.redirect("/login");
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
     });
 }); };
-exports.isUserAuth = isUserAuth;
+exports.getUserLeads = getUserLeads;

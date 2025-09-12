@@ -68,7 +68,6 @@ export const loginFunction = async (
     if (!existingUser) {
       throw new Error("User Does not Exist.");
     }
-
     if (existingUser?.isBlocked) {
       res.status(401);
       throw new Error("You Have Been Blocked By Admin.");
@@ -90,7 +89,7 @@ export const loginFunction = async (
         maxAge: 12 * 60 * 60 * 1000,
         path: "/",
       });
-      if (existingUser?.role === "user") {
+      if (existingUser?.role === "user" || existingUser?.role === "closer") {
         return res.redirect(303, "/user/profile");
       }
 

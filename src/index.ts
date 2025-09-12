@@ -43,7 +43,7 @@ app.locals.pusherCluster = process.env.PUSHER_CLUSTER;
 app.locals.currentMonth = monthNames[new Date().getMonth()];
 
 // ROUTING
-app.get("/", (_, res: Response) => {
+app.get("/", isUserAuth, (_, res: Response) => {
   res.redirect("/user/profile");
 });
 

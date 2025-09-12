@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../lib/prismaClient";
 import { Prisma } from "@prisma/client";
+import { returnRandomQuotes } from "../utils/appConstants";
 
 export const getUserLeads = async (
   req: Request,
@@ -40,6 +41,39 @@ export const getUserLeads = async (
     });
 
     res.render("pages/leads", { currentPath: "/user/leads", leads, status });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const getAddLeadPage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const process = await prisma.process.findMany({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, name: true },
+    });
+    const plan = await prisma.plan.findMany({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, name: true, processId: true },
+    });
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+      where: { role: "closer" },
+      select: { id: true, name: true },
+    });
+
+    res.render("pages/add-lead", {
+      currentPath: "/user/add-lead",
+      process,
+      plan,
+      users,
+      quote: returnRandomQuotes(),
+    });
   } catch (error) {
     console.log(error);
     next(error);
