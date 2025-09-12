@@ -10,6 +10,7 @@ import { monthNames } from "./utils/appConstants";
 import { isUserAuth } from "./middlewares/authMiddleware";
 import { loginFunction, logoutController } from "./controllers/auth.controller";
 import { prisma } from "./lib/prismaClient";
+import { errorHandler } from "./middlewares/errorMiddleware";
 
 const app = express();
 
@@ -75,6 +76,9 @@ app.use("/user", isUserAuth, pagesRouter);
 app.use((req, res) => {
   res.status(404).render("errors/404", { url: req.originalUrl, layout: false });
 });
+
+//ERROR HANDLER
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

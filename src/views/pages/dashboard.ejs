@@ -86,11 +86,11 @@
     <script>
       $("#attendance-btn").on("click", function () {
         $.ajax({
-          url: "/api/v1/user/attendance",
+          url: "attendance",
           type: "POST",
           contentType: "application/json",
           success: function (response) {
-            alert("Server Response: " + response);
+            alert("Server Response: " + response.message);
           },
           error: function (xhr, status, error) {
             console.log(xhr);

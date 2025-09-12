@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { getUserInfo } from "../controllers/profile.controller";
 import { getDailyLeadCount } from "../controllers/dashboard.controller";
-import { getUserAllAttendance } from "../controllers/attendance.controller";
+import {
+  createUserAttendance,
+  getUserAllAttendance,
+} from "../controllers/attendance.controller";
 import { getAllNotificationOfUser } from "../controllers/notification.controller";
 import { getAddLeadPage, getUserLeads } from "../controllers/lead.controller";
 
@@ -12,6 +15,7 @@ const router = Router();
 // });
 router.get("/dashboard", getDailyLeadCount);
 router.get("/attendance", getUserAllAttendance);
+router.post("/attendance", createUserAttendance);
 router.get("/leads", getUserLeads);
 router.get("/add-lead", getAddLeadPage);
 router.get("/profile", getUserInfo);
