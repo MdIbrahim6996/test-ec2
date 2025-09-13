@@ -62,6 +62,7 @@ export const isUserAuth = async (
         select: {
           id: true,
           email: true,
+          alias: true,
           name: true,
           role: true,
           employeeId: true,
