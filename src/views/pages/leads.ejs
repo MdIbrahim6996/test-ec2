@@ -86,8 +86,8 @@
           <tr>
             <td>
               <span
-                class="status-badge <%= lead.Status.name==='rework/warmup' ? 'rework' : lead.Status.name %>"
-                ><%= lead.Status.name %></span
+                class="status-badge <%= lead.status.name==='rework/warmup' ? 'rework' : lead.status.name %>"
+                ><%= lead && lead.status ? lead.status.name : "" %></span
               >
             </td>
             <td><%= new Date(lead.saleDate).toString().substring(0,15) %></td>
@@ -95,8 +95,12 @@
               <%= lead.title %> <%= lead.firstName %> <%= lead.middleName %> <%=
               lead.lastName %>
             </td>
-            <td class="process-name"><%= lead.Process.name %></td>
-            <td class="plan-name"><%= lead.Plan.name %></td>
+            <td class="process-name">
+              <%= lead && lead.process ? lead.process.name :"" %>
+            </td>
+            <td class="plan-name">
+              <%= lead && lead.plan ? lead.plan.name : "" %>
+            </td>
             <td>
               <a
                 href="#"
@@ -186,12 +190,14 @@
 
               statusChangeArray.forEach(function(item) {
                 var li = document.createElement("li");
+                var fromStatusName = item.fromStatus==="rework/warmup"?"rework":item.fromStatus
+                var toStatusName = item.toStatus==="rework/warmup"?"rework":item.toStatus
                 li.innerHTML =
                 '<div class="status-item">' +
                   '<p>' +
-                    '<span class="status-label success">' + item.fromStatus + '</span>' +
+                    '<span class="status-label '+fromStatusName+'">' + item.fromStatus + '</span>' +
                     ' &rarr; ' +
-                    '<span class="status-label pending">' + item.toStatus + '</span>' +
+                    '<span class="status-label '+toStatusName+'">' + item.toStatus + '</span>' +
                   '</p>' +
                   '<div class="status-meta">' +
                     '<p><span class="reason-label">REASON :</span> ' + item.reason + '</p>' +

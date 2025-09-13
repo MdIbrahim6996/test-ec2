@@ -36,11 +36,106 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserLeads = void 0;
+exports.getAddLeadPage = exports.getUserLeads = exports.createLead = void 0;
 var prismaClient_1 = require("../lib/prismaClient");
 var client_1 = require("@prisma/client");
+var appConstants_1 = require("../utils/appConstants");
+var createLead = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, title, firstName, middleName, lastName, centre, address, city, county, pincode, password, dateOfBirth, phone, process, plan, poa, closer, verifier, bank, paymentMethod, shift, comment, card, date, status_1, lead, dailyLeadCount, error_1;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = req.body, title = _a.title, firstName = _a.firstName, middleName = _a.middleName, lastName = _a.lastName, centre = _a.centre, address = _a.address, city = _a.city, county = _a.county, pincode = _a.pincode, password = _a.password, dateOfBirth = _a.dateOfBirth, phone = _a.phone, process = _a.process, plan = _a.plan, poa = _a.poa, closer = _a.closer, verifier = _a.verifier, bank = _a.bank, paymentMethod = _a.paymentMethod, shift = _a.shift, comment = _a.comment, card = _a.card;
+                date = new Date();
+                _c.label = 1;
+            case 1:
+                _c.trys.push([1, 5, , 6]);
+                return [4 /*yield*/, prismaClient_1.prisma.status.findFirst({
+                        where: { name: "pending" },
+                    })];
+            case 2:
+                status_1 = _c.sent();
+                return [4 /*yield*/, prismaClient_1.prisma.lead.create({
+                        data: {
+                            title: title,
+                            firstName: firstName,
+                            middleName: middleName,
+                            lastName: lastName,
+                            centre: centre,
+                            address: address,
+                            city: city,
+                            county: county,
+                            pincode: pincode,
+                            password: password,
+                            poa: poa === "true" ? true : false,
+                            dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : client_1.Prisma.skip,
+                            phone: phone,
+                            processId: parseInt(process),
+                            planId: parseInt(plan),
+                            leadByUserId: (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b.id,
+                            closerId: parseInt(closer),
+                            verifierId: parseInt(verifier),
+                            paymentMethod: paymentMethod,
+                            shift: shift,
+                            comment: comment ? comment : client_1.Prisma.skip,
+                            // BANK
+                            bankName: (bank === null || bank === void 0 ? void 0 : bank.bankName) ? bank === null || bank === void 0 ? void 0 : bank.bankName : client_1.Prisma.skip,
+                            accountName: (bank === null || bank === void 0 ? void 0 : bank.accountName) ? bank === null || bank === void 0 ? void 0 : bank.accountName : client_1.Prisma.skip,
+                            accountNumber: (bank === null || bank === void 0 ? void 0 : bank.accountNumber) ? bank === null || bank === void 0 ? void 0 : bank.accountNumber : client_1.Prisma.skip,
+                            sort: (bank === null || bank === void 0 ? void 0 : bank.sort) ? bank === null || bank === void 0 ? void 0 : bank.sort : client_1.Prisma.skip,
+                            // CARD
+                            cardName: (card === null || card === void 0 ? void 0 : card.name) ? card === null || card === void 0 ? void 0 : card.name : client_1.Prisma.skip,
+                            cardBankName: (card === null || card === void 0 ? void 0 : card.bankName) ? card === null || card === void 0 ? void 0 : card.bankName : client_1.Prisma.skip,
+                            cardNumber: (card === null || card === void 0 ? void 0 : card.cardNumber) ? card === null || card === void 0 ? void 0 : card.cardNumber : client_1.Prisma.skip,
+                            expiry: (card === null || card === void 0 ? void 0 : card.expiry) ? card === null || card === void 0 ? void 0 : card.expiry : client_1.Prisma.skip,
+                            cardCvv: (card === null || card === void 0 ? void 0 : card.cvv) ? card === null || card === void 0 ? void 0 : card.cvv : client_1.Prisma.skip,
+                            statusId: status_1 === null || status_1 === void 0 ? void 0 : status_1.id,
+                        },
+                        include: { status: { select: { name: true } } },
+                    })];
+            case 3:
+                lead = _c.sent();
+                return [4 /*yield*/, prismaClient_1.prisma.leadCount.upsert({
+                        where: {
+                            userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
+                            uniqueDate: {
+                                date: date.getDate(),
+                                month: date.getMonth() + 1,
+                                year: date.getFullYear() - 1,
+                                userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
+                            },
+                        },
+                        create: {
+                            userId: lead === null || lead === void 0 ? void 0 : lead.leadByUserId,
+                            count: 1,
+                            date: date.getDate(),
+                            month: date.getMonth() + 1,
+                            year: date.getFullYear() - 1,
+                        },
+                        update: { count: { increment: 1 } },
+                    })];
+            case 4:
+                dailyLeadCount = _c.sent();
+                if (lead === null || lead === void 0 ? void 0 : lead.id) {
+                    return [2 /*return*/, res.redirect("/user/add-lead?success=1")];
+                }
+                else {
+                    return [2 /*return*/, res.redirect("/user/add-lead?failed=1")];
+                }
+                return [3 /*break*/, 6];
+            case 5:
+                error_1 = _c.sent();
+                console.log(error_1);
+                next(error_1);
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
+        }
+    });
+}); };
+exports.createLead = createLead;
 var getUserLeads = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, statusId, saleDate, fromDate, toDate, id, newSaleDate, nextDay, status_1, leads, error_1;
+    var _a, statusId, saleDate, fromDate, toDate, id, newSaleDate, nextDay, status_2, leads, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -56,7 +151,7 @@ var getUserLeads = function (req, res, next) { return __awaiter(void 0, void 0, 
                 _b.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, prismaClient_1.prisma.status.findMany()];
             case 2:
-                status_1 = _b.sent();
+                status_2 = _b.sent();
                 return [4 /*yield*/, prismaClient_1.prisma.lead.findMany({
                         where: {
                             leadByUserId: id,
@@ -71,24 +166,69 @@ var getUserLeads = function (req, res, next) { return __awaiter(void 0, void 0, 
                             },
                         },
                         include: {
-                            Status: { select: { name: true } },
-                            Process: { select: { name: true } },
-                            Plan: { select: { name: true } },
+                            status: { select: { name: true } },
+                            process: { select: { name: true } },
+                            plan: { select: { name: true } },
                             StatusChangeReason: true,
                         },
                         orderBy: { createdAt: "desc" },
                     })];
             case 3:
                 leads = _b.sent();
-                res.render("pages/leads", { currentPath: "/user/leads", leads: leads, status: status_1 });
+                console.log(leads);
+                res.render("pages/leads", { currentPath: "/user/leads", leads: leads, status: status_2 });
                 return [3 /*break*/, 5];
             case 4:
-                error_1 = _b.sent();
-                console.log(error_1);
-                next(error_1);
+                error_2 = _b.sent();
+                console.log(error_2);
+                next(error_2);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
     });
 }); };
 exports.getUserLeads = getUserLeads;
+var getAddLeadPage = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var process_1, plan, users, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, prismaClient_1.prisma.process.findMany({
+                        orderBy: { createdAt: "desc" },
+                        select: { id: true, name: true },
+                    })];
+            case 1:
+                process_1 = _a.sent();
+                return [4 /*yield*/, prismaClient_1.prisma.plan.findMany({
+                        orderBy: { createdAt: "desc" },
+                        select: { id: true, name: true, processId: true },
+                    })];
+            case 2:
+                plan = _a.sent();
+                return [4 /*yield*/, prismaClient_1.prisma.user.findMany({
+                        orderBy: { createdAt: "desc" },
+                        where: { OR: [{ role: "closer" }, { role: "verifier" }] },
+                        select: { id: true, name: true, alias: true },
+                    })];
+            case 3:
+                users = _a.sent();
+                res.render("pages/add-lead", {
+                    currentPath: "/user/add-lead",
+                    process: process_1,
+                    plan: plan,
+                    users: users,
+                    quote: (0, appConstants_1.returnRandomQuotes)(),
+                    success: req.query.success,
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                error_3 = _a.sent();
+                console.log(error_3);
+                next(error_3);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAddLeadPage = getAddLeadPage;

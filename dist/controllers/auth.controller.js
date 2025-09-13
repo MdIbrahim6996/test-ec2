@@ -142,7 +142,7 @@ var loginFunction = function (req, res, next) { return __awaiter(void 0, void 0,
                         maxAge: 12 * 60 * 60 * 1000,
                         path: "/",
                     });
-                    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.role) === "user") {
+                    if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.role) === "user" || (existingUser === null || existingUser === void 0 ? void 0 : existingUser.role) === "closer") {
                         return [2 /*return*/, res.redirect(303, "/user/profile")];
                     }
                     //   if (existingUser?.role === "superadmin") {

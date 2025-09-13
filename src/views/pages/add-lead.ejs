@@ -11,10 +11,15 @@
       href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"
     />
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="/css/add-lead.css">
+    <link rel="stylesheet" href="/css/add-lead.css" />
   </head>
   <body>
     <main class="main">
+      <% if (success) { %>
+      <script>
+        alert("Form submitted successfully!");
+      </script>
+      <% } %>
       <h2 style="display: inline-block">ADD A NEW LEAD</h2>
       <span class="date-label"><%= new Date().toDateString()%></span>
       <p><%= quote && quote.quote ? quote.quote : "Achieve your target." %></p>
@@ -152,7 +157,7 @@
                 <option selected disabled>Select a Closer</option>
                 <% users.forEach(function(item){%>
                 <option value="<%= item.id%>" style="text-transform: uppercase">
-                  <%= item.name %>
+                  <%= item.alias %>
                 </option>
                 <%}) %>
               </select>
@@ -164,7 +169,7 @@
                 <option selected disabled>Select a Verifier</option>
                 <% users.forEach(function(item){%>
                 <option value="<%= item.id%>" style="text-transform: uppercase">
-                  <%= item.name %>
+                  <%= item.alias %>
                 </option>
                 <%}) %>
               </select>

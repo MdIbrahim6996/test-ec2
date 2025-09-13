@@ -51,6 +51,7 @@ var appConstants_1 = require("./utils/appConstants");
 var authMiddleware_1 = require("./middlewares/authMiddleware");
 var auth_controller_1 = require("./controllers/auth.controller");
 var prismaClient_1 = require("./lib/prismaClient");
+var errorMiddleware_1 = require("./middlewares/errorMiddleware");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -116,6 +117,8 @@ app.use("/user", authMiddleware_1.isUserAuth, routes_1.default);
 app.use(function (req, res) {
     res.status(404).render("errors/404", { url: req.originalUrl, layout: false });
 });
+//ERROR HANDLER
+app.use(errorMiddleware_1.errorHandler);
 var PORT = process.env.PORT || 8000;
 app.listen(PORT, function () {
     console.log("Server running on port ".concat(PORT));
