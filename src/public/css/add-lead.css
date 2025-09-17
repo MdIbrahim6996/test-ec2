@@ -36,6 +36,32 @@ form {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+form #appliance-details {
+  margin-bottom: 1rem;
+}
+
+form #appliance-details .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+form #appliance-details .header .add-btn {
+  background: #2563eb;
+  color: #fff;
+  padding: 3px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+form #appliance-details .remove-btn {
+  background: rgb(241, 46, 46);
+  color: #fff;
+  padding: 3px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin: 5px 0;
+}
+
 .form-row {
   width: 100%;
   clear: both;
@@ -45,6 +71,12 @@ form {
 .form-group {
   display: inline-block;
   width: 23%;
+  margin-right: 2%;
+  vertical-align: top;
+}
+.form-group-4 {
+  display: inline-block;
+  width: 30%;
   margin-right: 2%;
   vertical-align: top;
 }

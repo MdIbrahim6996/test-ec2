@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Form with jQuery</title>
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .hidden {
+      display: none;
+    }
+    .form-section {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+    label {
+      display: block;
+      margin-top: 8px;
+    }
+    input {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 200px;
+    }
+    .field-group {
+      margin-bottom: 10px;
+      position: relative;
+      padding-right: 30px;
+    }
+    .remove-btn {
+      position: absolute;
+      right: 0;
+      top: 5px;
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .remove-btn:hover {
+      background: #c0392b;
+    }
+    .add-btn {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-top: 10px;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .add-btn:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Select an Option</h2>
+
+  <label for="mainSelect">Choose:</label>
+  <select id="mainSelect">
+    <option value="">-- Please Select --</option>
+    <option value="showForm">Show Extra Form</option>
+    <option value="other">Other Option</option>
+  </select>
+
+  <!-- Hidden form initially -->
+  <div id="extraForm" class="form-section hidden">
+    <h3>Extra Form</h3>
+
+    <div id="inputFields">
+      <div class="field-group">
+        <label>Name:</label>
+        <input type="text" name="name[]" placeholder="Enter name">
+        <button type="button" class="remove-btn">❌</button>
+      </div>
+    </div>
+
+    <button type="button" id="addField" class="add-btn">+ Add More Fields</button>
+  </div>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      // Show/hide form based on select
+      $("#mainSelect").change(function () {
+        if ($(this).val() === "showForm") {
+          $("#extraForm").removeClass("hidden");
+        } else {
+          $("#extraForm").addClass("hidden");
+        }
+      });
+
+      // Add new input field dynamically
+      $("#addField").click(function () {
+        var newField = '<div class="field-group">' +
+                         '<label>Name:</label>' +
+                         '<input type="text" name="name[]" placeholder="Enter name">' +
+                         '<button type="button" class="remove-btn">❌</button>' +
+                       '</div>';
+        $("#inputFields").append(newField);
+      });
+
+      // Remove field when ❌ clicked (event delegation for dynamic elements)
+      $("#inputFields").on("click", ".remove-btn", function () {
+        $(this).parent(".field-group").remove();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -35,7 +35,7 @@ export const createUserAttendance = async (
     const currentUTCTime = new Date();
     const timeToCompare = new Date();
     const isLate =
-      currentUTCTime > new Date(timeToCompare.setUTCHours(9, 0, 0, 0))
+      currentUTCTime > new Date(timeToCompare.setUTCHours(9, 15, 0, 0))
         ? true
         : false;
     //9

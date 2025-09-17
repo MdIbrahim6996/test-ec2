@@ -59,11 +59,25 @@ export const createLead = async (
     poa,
     closer,
     verifier,
-    bank,
+
     paymentMethod,
+    // Bank
+    bankName,
+    accountName,
+    accountNumber,
+    sort,
+    // Card
+    cardName,
+    cardBankName,
+    cardNumber,
+    expiry,
+    cardCvv,
     shift,
     comment,
-    card,
+    // Appliances
+    applianceName,
+    makeOfAppliance,
+    ageOfAppliance,
   } = req.body;
   const date = new Date();
 
@@ -95,23 +109,33 @@ export const createLead = async (
         paymentMethod,
         shift,
         comment: comment ? comment : Prisma.skip,
-
         // BANK
-        bankName: bank?.bankName ? bank?.bankName : Prisma.skip,
-        accountName: bank?.accountName ? bank?.accountName : Prisma.skip,
-        accountNumber: bank?.accountNumber ? bank?.accountNumber : Prisma.skip,
-        sort: bank?.sort ? bank?.sort : Prisma.skip,
+        bankName: bankName ? bankName : Prisma.skip,
+        accountName: accountName ? accountName : Prisma.skip,
+        accountNumber: accountNumber ? accountNumber : Prisma.skip,
+        sort: sort ? sort : Prisma.skip,
         // CARD
-        cardName: card?.name ? card?.name : Prisma.skip,
-        cardBankName: card?.bankName ? card?.bankName : Prisma.skip,
-        cardNumber: card?.cardNumber ? card?.cardNumber : Prisma.skip,
-        expiry: card?.expiry ? card?.expiry : Prisma.skip,
-        cardCvv: card?.cvv ? card?.cvv : Prisma.skip,
+        cardName: cardName ? cardName : Prisma.skip,
+        cardBankName: cardBankName ? cardBankName : Prisma.skip,
+        cardNumber: cardNumber ? cardNumber : Prisma.skip,
+        expiry: expiry ? expiry : Prisma.skip,
+        cardCvv: cardCvv ? cardCvv : Prisma.skip,
         statusId: status?.id,
       },
       include: { status: { select: { name: true } } },
     });
 
+
+    const appliances = applianceName.map((_: any, i: number) => ({
+      name: applianceName[i],
+      makeOfAppliance: makeOfAppliance[i],
+      age: Number(ageOfAppliance[i]),
+      leadId: lead?.id,
+    }));
+
+    if (appliances && appliances.length > 0) {
+      await prisma.appliance.createMany({ data: appliances });
+    }
     const dailyLeadCount = await prisma.leadCount.upsert({
       where: {
         userId: lead?.leadByUserId as number,

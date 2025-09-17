@@ -1,12 +1,10 @@
 generator client {
   provider        = "prisma-client-js"
-  // output          = "../src/generated/prisma"
   previewFeatures = ["strictUndefinedChecks"]
 }
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
   url      = env("DB_P_URL")
 }
 
@@ -14,7 +12,6 @@ model User {
   id                 Int                  @id @default(autoincrement())
   email              String               @unique
   name               String
-  alias              String               @unique
   employeeId         String               @unique
   phone              String
   isBlocked          Boolean              @default(false)
@@ -22,15 +19,16 @@ model User {
   role               String               @default("user")
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
+  alias              String               @unique
   processId          Int?
-  process            Process?             @relation(fields: [processId], references: [id], onDelete: SetNull)
   attendances        Attendance[]
-  createdLeads       Lead[]               @relation("leadByUser")
   closedLeads        Lead[]               @relation("leadCloser")
+  createdLeads       Lead[]               @relation("leadByUser")
   verifiedLeads      Lead[]               @relation("leadVerifier")
-  Notification       Notification[]
   LeadCount          LeadCount[]
+  Notification       Notification[]
   StatusChangeReason StatusChangeReason[]
+  process            Process?             @relation(fields: [processId], references: [id])
 }
 
 model Process {
@@ -50,7 +48,7 @@ model Plan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Lead      Lead[]
-  process   Process? @relation(fields: [processId], references: [id], onDelete: SetNull)
+  process   Process? @relation(fields: [processId], references: [id])
 }
 
 model Holiday {
@@ -67,7 +65,7 @@ model Attendance {
   userId   Int?     @default(1)
   isLate   Boolean  @default(false)
   dateTime DateTime @default(now())
-  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user     User?    @relation(fields: [userId], references: [id])
 }
 
 model Appliance {
@@ -75,13 +73,14 @@ model Appliance {
   name            String
   makeOfAppliance String
   age             Int
+  leadId          Int
+  lead            Lead     @relation(fields: [leadId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  Lead            Lead[]
+  // Lead            Lead[]
 }
 
 model Lead {
-  // Customer Info
   id                 Int                  @id @default(autoincrement())
   title              String
   firstName          String
@@ -90,48 +89,45 @@ model Lead {
   centre             String
   address            String?
   city               String?
-  county             String?
   pincode            String
   password           String?
   dateOfBirth        DateTime?
   phone              String
-  poa                Boolean              @default(false)
-  // Process Details
   processId          Int?
   planId             Int?
   closerId           Int?
-  leadByUserId       Int?
-  verifierId         Int?
   fee                Int?
   currency           String?
-  shift              String?
-  paymentMethod      String?
-  comment            String?
-  // Bank Details
   bankName           String?
   accountName        String?
-  accountNumber      String?
   sort               String?
-  // Card Details
-  cardName           String?
-  cardBankName       String?
-  cardNumber         String?
-  expiry             String?
-  cardCvv            String?
-  // Relations
-  applianceId        Int?
+  // applianceId        Int?
   statusId           Int?                 @default(1)
   saleDate           DateTime             @default(now())
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  status             Status?              @relation(fields: [statusId], references: [id], onDelete: SetNull)
-  appliance          Appliance?           @relation(fields: [applianceId], references: [id], onDelete: SetNull)
-  closer             User?                @relation(name: "leadCloser", fields: [closerId], references: [id], onDelete: SetNull)
-  leadBy             User?                @relation(name: "leadByUser", fields: [leadByUserId], references: [id], onDelete: SetNull)
-  verifier           User?                @relation(name: "leadVerifier", fields: [verifierId], references: [id], onDelete: SetNull)
-  plan               Plan?                @relation(fields: [planId], references: [id], onDelete: SetNull)
-  process            Process?             @relation(fields: [processId], references: [id], onDelete: SetNull)
+  accountNumber      String?
+  cardBankName       String?
+  cardCvv            String?
+  cardName           String?
+  cardNumber         String?
+  county             String?
+  expiry             String?
+  shift              String?
+  leadByUserId       Int?
+  verifierId         Int?
+  paymentMethod      String?
+  comment            String?
+  poa                Boolean              @default(false)
+  // appliance          Appliance?           @relation(fields: [applianceId], references: [id])
+  closer             User?                @relation("leadCloser", fields: [closerId], references: [id])
+  leadBy             User?                @relation("leadByUser", fields: [leadByUserId], references: [id])
+  plan               Plan?                @relation(fields: [planId], references: [id])
+  process            Process?             @relation(fields: [processId], references: [id])
+  status             Status?              @relation(fields: [statusId], references: [id])
+  verifier           User?                @relation("leadVerifier", fields: [verifierId], references: [id])
   StatusChangeReason StatusChangeReason[]
+  Appliance          Appliance[]
 }
 
 model Status {
@@ -151,7 +147,7 @@ model Notification {
   saleDate  DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model LeadCount {
@@ -161,23 +157,22 @@ model LeadCount {
   month     Int
   year      Int
   userId    Int?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
 
   @@unique([date, month, year, userId], name: "uniqueDate")
 }
 
 model StatusChangeReason {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   reason     String
+  userId     Int?
+  leadId     Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   fromStatus String?
   toStatus   String?
-  userId     Int?
-  user       User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  leadId     Int?
-  lead       Lead?   @relation(fields: [leadId], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lead       Lead?    @relation(fields: [leadId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
 }

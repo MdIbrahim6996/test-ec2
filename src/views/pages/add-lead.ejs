@@ -18,6 +18,7 @@
       <% if (success) { %>
       <script>
         alert("Form submitted successfully!");
+        window.location.href = "/user/add-lead";
       </script>
       <% } %>
       <h2 style="display: inline-block">ADD A NEW LEAD</h2>
@@ -102,10 +103,10 @@
           <div class="form-group">
             <label>Date of Birth</label>
             <input
-              type="text"
+              type="date"
               class="datepicker"
               placeholder="yyyy-mm-dd"
-              name="dateOfbirth"
+              name="dateOfBirth"
             />
           </div>
           <div class="form-group">
@@ -173,6 +174,53 @@
                 </option>
                 <%}) %>
               </select>
+            </div>
+          </div>
+
+          <!-- APPLIANCE DETAILS (Hidden Initially) -->
+          <div id="appliance-details">
+            <div class="header">
+              <h3>Appliance Details</h3>
+              <button type="button" id="addField" class="btn add-btn">
+                + Add More Fields
+              </button>
+            </div>
+            <div id="appliance-section">
+              <div class="form-section">
+                <div class="form-group-4">
+                  <label for="applianceName">Appliance Name</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Washing Machine"
+                    name="applianceName[]"
+                    id="applianceName"
+                  />
+                </div>
+                <div class="form-group-4">
+                  <label for="makeOfAppliance">Make Of Appliance</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder=""
+                    name="makeOfAppliance[]"
+                    id="makeOfAppliance"
+                  />
+                </div>
+                <div class="form-group-4">
+                  <label for="age">Age</label>
+                  <input
+                    id="age"
+                    required
+                    type="number"
+                    placeholder="10"
+                    name="ageOfAppliance[]"
+                  />
+                </div>
+                <button type="button" id="addField" class="btn remove-btn">
+                  - Remove Fields
+                </button>
+              </div>
             </div>
           </div>
 
@@ -303,6 +351,7 @@
 
       $("#bank-details").slideUp(); // hide if not bank
       $("#card-details").slideUp(); // hide if not bank
+      $("#appliance-details").slideUp();
 
       $(document).ready(function () {
         $("#payment-method").change(function () {
@@ -415,8 +464,50 @@
           opt.text = plan.name;
           planSelect.appendChild(opt);
           })
-        }
+        }})
+        
+        // LOGIC FOR ADD APPLICANCE
+         $(document).ready(function () {
+        $("#process").change(function () {
+          var value = $(this).val();
+          console.log(value)
+          if (+value !== 7) {
+            $("#appliance-details").slideDown(); // show with animation
+          } else {
+            $("#appliance-details").slideUp(); // hide if not bank
+          }
+        });
       });
+
+       // Add new input field dynamically
+      $("#addField").click(function () {
+        var newField =
+          '<div class="form-section">' +
+          '<div class="form-group-4">' +
+            '<label for="applianceName">Appliance Name</label>' +
+            '<input type="text" required placeholder="Washing Machine" name="applianceName[]" />' +
+          '</div>' +
+          '<div class="form-group-4">' +
+            '<label for="makeOfAppliance">Make Of Appliance</label>' +
+            '<input type="text" required name="makeOfAppliance[]" />' +
+          '</div>' +
+          '<div class="form-group-4">' +
+            '<label for="age">Age</label>' +
+            '<input type="number" required placeholder="10" name="ageOfAppliance[]" />' +
+          '</div>' +
+          '<button type="button" class="btn remove-btn">- Remove Fields</button>' +
+        '</div>';
+
+
+        $("#appliance-section").append(newField);
+      });
+
+       // Remove section on click
+      $("#appliance-section").on("click", ".remove-btn", function () {
+        $(this).closest(".form-section").remove();
+        //  $(this).parent(".form-section").remove();
+      });
+ 
     </script>
   </body>
 </html>
