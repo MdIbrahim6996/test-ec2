@@ -187,7 +187,7 @@
             </div>
             <div id="appliance-section">
               <div class="form-section">
-                <div class="form-group-4">
+                <!-- <div class="form-group-4">
                   <label for="applianceName">Appliance Name</label>
                   <input
                     type="text"
@@ -216,10 +216,10 @@
                     placeholder="10"
                     name="ageOfAppliance[]"
                   />
-                </div>
-                <button type="button" id="addField" class="btn remove-btn">
+                </div> -->
+                <!-- <button type="button" id="addField" class="btn remove-btn">
                   - Remove Fields
-                </button>
+                </button> -->
               </div>
             </div>
           </div>
@@ -465,13 +465,13 @@
           planSelect.appendChild(opt);
           })
         }})
-        
+
         // LOGIC FOR ADD APPLICANCE
          $(document).ready(function () {
         $("#process").change(function () {
           var value = $(this).val();
           console.log(value)
-          if (+value !== 7) {
+          if (+value !== 3) {
             $("#appliance-details").slideDown(); // show with animation
           } else {
             $("#appliance-details").slideUp(); // hide if not bank
@@ -507,7 +507,6 @@
         $(this).closest(".form-section").remove();
         //  $(this).parent(".form-section").remove();
       });
- 
     </script>
   </body>
 </html>

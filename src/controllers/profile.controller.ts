@@ -35,7 +35,12 @@ const getProfileCardInfo = async (userId: number) => {
     },
   });
   const successStatus = await prisma.status.findFirst({
-    where: { name: { contains: "success", mode: "insensitive" } },
+    where: {
+      name: {
+        contains: "success",
+        // mode: "insensitive"
+      },
+    },
   });
   const totalSuccessLead = await prisma.lead.count({
     where: {

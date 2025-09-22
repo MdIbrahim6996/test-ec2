@@ -126,7 +126,7 @@ export const createLead = async (
     });
 
 
-    const appliances = applianceName.map((_: any, i: number) => ({
+    const appliances = applianceName?.map((_: any, i: number) => ({
       name: applianceName[i],
       makeOfAppliance: makeOfAppliance[i],
       age: Number(ageOfAppliance[i]),

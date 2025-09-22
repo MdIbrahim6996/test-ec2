@@ -101,7 +101,7 @@
             <td class="plan-name">
               <%= lead && lead.plan ? lead.plan.name : "" %>
             </td>
-            <td>
+            <td style="white-space: nowrap">
               <a
                 href="#"
                 class="openModalBtn btn btn-green action-btn"
@@ -171,7 +171,7 @@
             var overlay = document.getElementById("overlay");
             var modal = document.getElementById("chartModal");
             var modalContent = document.querySelector(".modal-body")
-      console.log(modalContent)
+      // console.log(modalContent)
             var openBtn = document.getElementsByClassName("openModalBtn");
             for (var i = 0; i < openBtn.length; i++) {
               openBtn[i].addEventListener(
