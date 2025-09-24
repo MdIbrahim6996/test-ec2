@@ -29,6 +29,8 @@ model User {
   Notification       Notification[]
   StatusChangeReason StatusChangeReason[]
   process            Process?             @relation(fields: [processId], references: [id])
+
+  @@map("user")
 }
 
 model Process {
@@ -39,6 +41,8 @@ model Process {
   Lead      Lead[]
   plans     Plan[]
   User      User[]
+
+  @@map("process")
 }
 
 model Plan {
@@ -49,6 +53,8 @@ model Plan {
   updatedAt DateTime @updatedAt
   Lead      Lead[]
   process   Process? @relation(fields: [processId], references: [id])
+
+  @@map("plan")
 }
 
 model Holiday {
@@ -58,14 +64,18 @@ model Holiday {
   endDate   DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("holiday")
 }
 
 model Attendance {
   id       Int      @id @default(autoincrement())
-  userId   Int?     @default(1)
+  userId   Int?
   isLate   Boolean  @default(false)
   dateTime DateTime @default(now())
   user     User?    @relation(fields: [userId], references: [id])
+
+  @@map("attendance")
 }
 
 model Appliance {
@@ -73,11 +83,12 @@ model Appliance {
   name            String
   makeOfAppliance String
   age             Int
-  leadId          Int
-  lead            Lead     @relation(fields: [leadId], references: [id])
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  // Lead            Lead[]
+  leadId          Int?
+  Lead            Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  @@map("appliance")
 }
 
 model Lead {
@@ -101,8 +112,7 @@ model Lead {
   bankName           String?
   accountName        String?
   sort               String?
-  // applianceId        Int?
-  statusId           Int?                 @default(1)
+  statusId           Int?
   saleDate           DateTime             @default(now())
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
@@ -119,7 +129,7 @@ model Lead {
   paymentMethod      String?
   comment            String?
   poa                Boolean              @default(false)
-  // appliance          Appliance?           @relation(fields: [applianceId], references: [id])
+  Appliance          Appliance[]
   closer             User?                @relation("leadCloser", fields: [closerId], references: [id])
   leadBy             User?                @relation("leadByUser", fields: [leadByUserId], references: [id])
   plan               Plan?                @relation(fields: [planId], references: [id])
@@ -127,7 +137,8 @@ model Lead {
   status             Status?              @relation(fields: [statusId], references: [id])
   verifier           User?                @relation("leadVerifier", fields: [verifierId], references: [id])
   StatusChangeReason StatusChangeReason[]
-  Appliance          Appliance[]
+
+  @@map("lead")
 }
 
 model Status {
@@ -136,6 +147,8 @@ model Status {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Lead      Lead[]
+
+  @@map("status")
 }
 
 model Notification {
@@ -148,6 +161,8 @@ model Notification {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("notification")
 }
 
 model LeadCount {
@@ -162,6 +177,7 @@ model LeadCount {
   user      User?    @relation(fields: [userId], references: [id])
 
   @@unique([date, month, year, userId], name: "uniqueDate")
+  @@map("leadcount")
 }
 
 model StatusChangeReason {
@@ -175,4 +191,123 @@ model StatusChangeReason {
   toStatus   String?
   lead       Lead?    @relation(fields: [leadId], references: [id])
   user       User?    @relation(fields: [userId], references: [id])
+
+  @@map("status_change_reason")
+}
+
+model old_users {
+  id                BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  employee_id       String?
+  name              String    @db.VarChar(150)
+  email             String?   @db.VarChar(100)
+  email_verified_at DateTime? @db.Timestamp(0)
+  email_otp         String?   @db.VarChar(10)
+  designation       String?   @db.VarChar(150)
+  gender            String?   @db.VarChar(20)
+  address           String?   @db.VarChar(300)
+  city              String?   @db.VarChar(100)
+  state             String?   @db.VarChar(100)
+  pin               String?   @db.VarChar(20)
+  pan               String?   @db.VarChar(20)
+  pic               String?
+  password          String
+  role              String    @default("Superadmin") @db.VarChar(30)
+  phone             String?   @db.VarChar(20)
+  join_at           DateTime? @db.Date
+  active            Boolean   @default(true)
+  remember_token    String?   @db.VarChar(100)
+  created_at        DateTime? @db.Timestamp(0)
+  updated_at        DateTime? @db.Timestamp(0)
+
+  leads_created old_leads[] @relation("old_leads_user_idToold_users")
+  leads_closed  old_leads[] @relation("old_leads_closer_user_idToold_users")
+
+  @@index([email], map: "users_email_index")
+  @@index([phone], map: "users_phone_index")
+  @@map("old_users")
+}
+
+model old_leads {
+  id             BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  user_id        BigInt    @db.UnsignedBigInt
+  sale_at        DateTime? @db.Date
+  salutation     String?   @db.VarChar(20)
+  closer_user_id BigInt?   @db.UnsignedBigInt
+  fname          String
+  mname          String?
+  lname          String?
+  address1       String?   @db.MediumText
+  city           String?
+  country        String?
+  pin            String?
+  password       String?
+  dob            DateTime? @db.Date
+  phone          String?
+  process        String?
+  plan           String?
+  fee            String?
+  currency       String?
+  bank_name      String?
+  account_name   String?
+  account_no     String?
+  sort_code      String?
+  card_no        String?
+  card_type      String?
+  expiry_month   Int?
+  expiry_year    Int?
+  card_cvv       String?   @db.VarChar(10)
+  comments       String?   @db.Text
+  centre         String?   @db.VarChar(255)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @db.Timestamp(0)
+  // old_users_old_leads_closer_user_idToold_users old_users? @relation("old_leads_closer_user_idToold_users", fields: [closer_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "leads_closer_user_id_foreign")
+  // old_users_old_leads_user_idToold_users        old_users  @relation("old_leads_user_idToold_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "leads_user_id_foreign")
+
+  closer old_users? @relation("old_leads_closer_user_idToold_users", fields: [closer_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "leads_closer_user_id_foreign")
+  user   old_users  @relation("old_leads_user_idToold_users", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "leads_user_id_foreign")
+
+  @@index([closer_user_id], map: "leads_closer_user_id_foreign")
+  @@index([user_id], map: "leads_user_id_foreign")
+  @@map("old_leads")
+}
+
+model lead_forms {
+  id                BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  agent_name        String?   @db.VarChar(255)
+  agent_id          String?   @db.VarChar(100)
+  sale_date         DateTime? @db.Date
+  closer_name       String?   @db.VarChar(255)
+  cust_title        String?   @db.VarChar(255)
+  cust_first_name   String?   @db.VarChar(255)
+  cust_middle_name  String?   @db.VarChar(255)
+  cust_last_name    String?   @db.VarChar(255)
+  address           String?   @db.VarChar(255)
+  pincode           String?   @db.VarChar(255)
+  city              String?   @db.VarChar(255)
+  country           String?   @db.VarChar(255)
+  phone             String?   @db.VarChar(255)
+  password          String?   @db.VarChar(255)
+  dob               DateTime? @db.Date
+  process           String?   @db.VarChar(255)
+  plan              String?   @db.VarChar(255)
+  plan_fee          String?   @db.VarChar(255)
+  name_of_bank      String?   @db.VarChar(255)
+  account_name      String?   @db.VarChar(255)
+  account_number    String?   @db.VarChar(255)
+  sort_code         String?   @db.VarChar(255)
+  appliance         String?   @db.VarChar(255)
+  make_of_appliance String?   @db.VarChar(255)
+  age               String?   @db.VarChar(255)
+  card_number       String?   @db.VarChar(255)
+  cardType          String?   @db.VarChar(100)
+  expMonth          String?   @db.VarChar(100)
+  expYear           Int?
+  card_cvv_number   String?   @db.VarChar(255)
+  comment           String?   @db.Text
+  product_details   String?   @db.Text
+  deleted_at        DateTime? @db.Timestamp(0)
+  created_at        DateTime? @db.Timestamp(0)
+  updated_at        DateTime? @db.Timestamp(0)
+
+  @@map("lead_forms")
 }
