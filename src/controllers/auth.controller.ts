@@ -89,7 +89,11 @@ export const loginFunction = async (
         maxAge: 12 * 60 * 60 * 1000,
         path: "/",
       });
-      if (existingUser?.role === "user" || existingUser?.role === "closer") {
+      if (
+        existingUser?.role === "user" ||
+        existingUser?.role === "closer" ||
+        existingUser?.role === "verifier"
+      ) {
         return res.redirect(303, "/user/profile");
       }
 
