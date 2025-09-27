@@ -11,6 +11,7 @@ import { isUserAuth } from "./middlewares/authMiddleware";
 import { loginFunction, logoutController } from "./controllers/auth.controller";
 import { prisma } from "./lib/prismaClient";
 import { errorHandler } from "./middlewares/errorMiddleware";
+import { createLeadUpdated } from "./controllers/lead.controller";
 
 const app = express();
 
@@ -32,6 +33,9 @@ app.use((req, res, next) => {
   res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
   next();
 });
+
+app.post("/test", createLeadUpdated);
+
 
 //STATIC FILES
 app.use(express.static(path.join(path.resolve(), "src/public")));
@@ -71,7 +75,8 @@ app.use(isUserAuth, async (req, res, next) => {
   next();
 });
 app.get("/logout", logoutController);
-app.use("/user", isUserAuth, pagesRouter);
+//isUserAuth
+app.use("/user", pagesRouter);
 
 app.use((req, res) => {
   res.status(404).render("errors/404", { url: req.originalUrl, layout: false });

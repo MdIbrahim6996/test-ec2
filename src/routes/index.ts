@@ -11,6 +11,7 @@ import {
 } from "../controllers/notification.controller";
 import {
   createLead,
+  createLeadUpdated,
   getAddLeadPage,
   getUserLeads,
 } from "../controllers/lead.controller";
@@ -25,7 +26,8 @@ router.get("/attendance", getUserAllAttendance);
 router.post("/attendance", createUserAttendance);
 router.get("/leads", getUserLeads);
 router.get("/add-lead", getAddLeadPage);
-router.post("/add-lead", createLead);
+router.post("/add-lead", createLeadUpdated);
+// router.post("/add-lead", createLead);
 router.get("/profile", getUserInfo);
 router.get("/notification", getAllNotificationOfUser);
 router.post("/notification/:userId/:id", deleteNotification);

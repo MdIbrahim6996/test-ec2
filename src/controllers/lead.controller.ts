@@ -3,6 +3,183 @@ import { prisma } from "../lib/prismaClient";
 import { Prisma } from "@prisma/client";
 import { returnRandomQuotes } from "../utils/appConstants";
 
+async function runTransactionWithRetry<T>(
+  fn: (tx: typeof prisma) => Promise<T>,
+  retries = 5,
+  delayMs = 300
+): Promise<T> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      // @ts-ignore
+      return await prisma.$transaction(fn);
+    } catch (err) {
+      console.warn(`Transaction attempt ${i + 1} failed:`, err);
+      if (i === retries - 1) throw err; // last attempt → throw
+      await new Promise((r) => setTimeout(r, delayMs)); // wait before retry
+    }
+  }
+  throw new Error("Unreachable"); // should never reach
+}
+
+export const createLeadUpdated = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  console.log("updated", req.body);
+  const {
+    title,
+    firstName,
+    middleName,
+    lastName,
+    centre,
+    address,
+    city,
+    county,
+    pincode,
+    password,
+    dateOfBirth,
+    phone,
+    process,
+    plan,
+    poa,
+    closer,
+    verifier,
+
+    paymentMethod,
+    // Bank
+    bankName,
+    accountName,
+    accountNumber,
+    sort,
+    // Card
+    cardName,
+    cardBankName,
+    cardNumber,
+    expiry,
+    cardCvv,
+    shift,
+    comment,
+    // Appliances
+    applianceName,
+    makeOfAppliance,
+    ageOfAppliance,
+  } = req.body;
+  const date = new Date();
+
+  try {
+    const status = await prisma.status.findFirst({
+      where: { name: "pending" },
+    });
+
+    const leadUpdated = await runTransactionWithRetry(async (tx) => {
+      const lead = await tx.lead.create({
+        data: {
+          title,
+          firstName,
+          middleName,
+          lastName,
+          centre,
+          address,
+          city,
+          county,
+          pincode,
+          password,
+          poa: poa === "true" ? true : false,
+          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : Prisma.skip,
+          phone,
+          processId: parseInt(process),
+          planId: parseInt(plan),
+          // leadByUserId: req?.user?.id!,
+          leadByUserId: req?.body?.leadByUserId!,
+          closerId: parseInt(closer),
+          verifierId: parseInt(verifier),
+          paymentMethod,
+          shift,
+          comment: comment ? comment : Prisma.skip,
+          // BANK
+          bankName: bankName ? bankName : Prisma.skip,
+          accountName: accountName ? accountName : Prisma.skip,
+          accountNumber: accountNumber ? accountNumber : Prisma.skip,
+          sort: sort ? sort : Prisma.skip,
+          // CARD
+          cardName: cardName ? cardName : Prisma.skip,
+          cardBankName: cardBankName ? cardBankName : Prisma.skip,
+          cardNumber: cardNumber ? cardNumber : Prisma.skip,
+          expiry: expiry ? expiry : Prisma.skip,
+          cardCvv: cardCvv ? cardCvv : Prisma.skip,
+          statusId: status?.id,
+        },
+        include: { status: { select: { name: true } } },
+      });
+
+      const appliances = applianceName?.map((_: any, i: number) => ({
+        name: applianceName[i],
+        makeOfAppliance: makeOfAppliance[i],
+        age: Number(ageOfAppliance[i]),
+        leadId: lead?.id,
+      }));
+
+      if (appliances && appliances.length > 0) {
+        await tx.appliance.createMany({ data: appliances });
+      }
+
+      await tx.leadCount.upsert({
+        where: {
+          userId: lead?.leadByUserId as number,
+          uniqueDate: {
+            date: date.getDate(),
+            month: date.getMonth() + 1,
+            year: date.getFullYear() - 1,
+            userId: lead?.leadByUserId as number,
+          },
+        },
+        create: {
+          userId: lead?.leadByUserId as number,
+          count: 1,
+          date: date.getDate(),
+          month: date.getMonth() + 1,
+          year: date.getFullYear() - 1,
+        },
+        update: { count: { increment: 1 } },
+      });
+
+      return lead;
+    });
+
+    // const dailyLeadCount = await prisma.leadCount.upsert({
+    //   where: {
+    //     userId: lead?.leadByUserId as number,
+    //     uniqueDate: {
+    //       date: date.getDate(),
+    //       month: date.getMonth() + 1,
+    //       year: date.getFullYear() - 1,
+    //       userId: lead?.leadByUserId as number,
+    //     },
+    //   },
+    //   create: {
+    //     userId: lead?.leadByUserId as number,
+    //     count: 1,
+    //     date: date.getDate(),
+    //     month: date.getMonth() + 1,
+    //     year: date.getFullYear() - 1,
+    //   },
+    //   update: { count: { increment: 1 } },
+    // });
+
+    if (leadUpdated?.id) {
+      return res.redirect("/user/add-lead?success=1");
+    } else {
+      return res.redirect("/user/add-lead?failed=1");
+    }
+
+    // res.send(lead);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 export const createLead = async (
   req: Request,
   res: Response,
@@ -124,7 +301,6 @@ export const createLead = async (
       },
       include: { status: { select: { name: true } } },
     });
-
 
     const appliances = applianceName?.map((_: any, i: number) => ({
       name: applianceName[i],

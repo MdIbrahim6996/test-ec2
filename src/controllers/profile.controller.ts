@@ -156,7 +156,7 @@ export const getUserInfo = async (
   next: NextFunction
 ) => {
   const { id: userId } = req.user!;
-
+  console.log("userid", userId);
   try {
     const user = await prisma.user.findFirst({
       where: { id: userId },
@@ -168,6 +168,7 @@ export const getUserInfo = async (
 
     if (cache.has(cacheKey)) {
       const profileData: any = cache.get(cacheKey);
+      // console.log(profileData);
 
       return res.render("pages/profile", {
         currentPath: "/user/profile",
