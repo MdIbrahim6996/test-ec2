@@ -55,6 +55,10 @@ const getProfileCardInfo = async (userId: number) => {
       dateTime: { gte: currentStartMonth, lte: nextStartMonth },
     },
   });
+  console.log("todayLead",todayLead)
+  console.log("totalLead",totalLead)
+  console.log("totalSuccessLead",totalSuccessLead)
+  console.log("totalAttendance",totalAttendance)
   let spd;
   if (totalAttendance > 0) spd = totalSuccessLead / totalAttendance;
   return {
@@ -156,7 +160,7 @@ export const getUserInfo = async (
   next: NextFunction
 ) => {
   const { id: userId } = req.user!;
-  console.log("userid", userId);
+  // console.log("userid", userId);
   try {
     const user = await prisma.user.findFirst({
       where: { id: userId },
