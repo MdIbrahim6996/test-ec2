@@ -39,8 +39,8 @@ import loadtest from "loadtest";
 
 const options = {
   url: "http://localhost:8000/test", // your route
-  concurrency: 50, // 5 users at a time
-  maxRequests: 500, // total requests
+  concurrency: 25, // 5 users at a time
+  maxRequests: 250, // total requests
   method: "POST" as "POST",
   contentType: "application/json",
   headers: {

@@ -26,7 +26,7 @@ export const createLeadUpdated = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("updated", req.body);
+  // console.log("updated", req.body);
   const {
     title,
     firstName,
